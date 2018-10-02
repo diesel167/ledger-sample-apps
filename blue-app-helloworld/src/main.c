@@ -100,6 +100,108 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // ********************************************************************************
 
 
+
+
+static bagl_element_t bagl_ui_sample_nanos[] = {
+    // {
+    //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
+    //      bgcolor, font_id, icon_id},
+    //     text,
+    //     touch_area_brim,
+    //     overfgcolor,
+    //     overbgcolor,
+    //     tap,
+    //     out,
+    //     over,
+    // },
+    {
+        {BAGL_RECTANGLE, 0x00, 0, 0, 128, 32, 0, 0, BAGL_FILL, 0x000000,
+         0xFFFFFF, 0, 0},
+        NULL,
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        NULL,
+    },
+    {
+        {BAGL_LABELINE, 0x01, 0, 12, 128, 32, 0, 0, 0, 0xFFFFFF, 0x000000,
+         BAGL_FONT_OPEN_SANS_REGULAR_11px | BAGL_FONT_ALIGNMENT_CENTER, 0},
+        "Hello World",
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        NULL,
+    },
+    {
+        {BAGL_ICON, 0x00, 3, 12, 7, 7, 0, 0, 0, 0xFFFFFF, 0x000000, 0,
+         BAGL_GLYPH_ICON_CROSS},
+        NULL,
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        NULL,
+    },
+    {
+        {BAGL_ICON, 0x00, 117, 13, 8, 6, 0, 0, 0, 0xFFFFFF, 0x000000, 0,
+         BAGL_GLYPH_ICON_CHECK},
+        NULL,
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        NULL,
+    },
+};
+
+
+static const bagl_element_t *io_seproxyhal_touch_exit(const bagl_element_t *e) {
+    // Go back to the dashboard
+    os_sched_exit(0);
+    return NULL;
+}
+
+unsigned short io_exchange_al(unsigned char channel, unsigned short tx_len) {
+    switch (channel & ~(IO_FLAGS)) {
+    case CHANNEL_KEYBOARD:
+        break;
+
+    // multiplexed io exchange over a SPI channel and TLV encapsulated protocol
+    case CHANNEL_SPI:
+        if (tx_len) {
+            io_seproxyhal_spi_send(G_io_apdu_buffer, tx_len);
+
+            if (channel & IO_RESET_AFTER_REPLIED) {
+                reset();
+            }
+            return 0; // nothing received from the master so far (it's a tx
+                      // transaction)
+        } else {
+            return io_seproxyhal_spi_recv(G_io_apdu_buffer,
+                                          sizeof(G_io_apdu_buffer), 0);
+        }
+
+    default:
+        THROW(INVALID_PARAMETER);
+    }
+    return 0;
+}
+
+void ui_idle(void) {
+    if (os_seph_features() &
+        SEPROXYHAL_TAG_SESSION_START_EVENT_FEATURE_SCREEN_BIG) {
+        UX_DISPLAY(bagl_ui_sample_blue, NULL);
+    } else {
+        UX_DISPLAY(bagl_ui_sample_nanos, NULL);
+    }
+}
+
 static const bagl_element_t *io_seproxyhal_touch_next(const bagl_element_t *e) {
   
     
@@ -228,63 +330,6 @@ static const bagl_element_t *io_seproxyhal_touch_prev(const bagl_element_t *e) {
     return NULL;
 }
 
-static bagl_element_t bagl_ui_sample_nanos[] = {
-    // {
-    //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
-    //      bgcolor, font_id, icon_id},
-    //     text,
-    //     touch_area_brim,
-    //     overfgcolor,
-    //     overbgcolor,
-    //     tap,
-    //     out,
-    //     over,
-    // },
-    {
-        {BAGL_RECTANGLE, 0x00, 0, 0, 128, 32, 0, 0, BAGL_FILL, 0x000000,
-         0xFFFFFF, 0, 0},
-        NULL,
-        0,
-        0,
-        0,
-        NULL,
-        NULL,
-        NULL,
-    },
-    {
-        {BAGL_LABELINE, 0x01, 0, 12, 128, 32, 0, 0, 0, 0xFFFFFF, 0x000000,
-         BAGL_FONT_OPEN_SANS_REGULAR_11px | BAGL_FONT_ALIGNMENT_CENTER, 0},
-        "Hello World",
-        0,
-        0,
-        0,
-        NULL,
-        NULL,
-        NULL,
-    },
-    {
-        {BAGL_ICON, 0x00, 3, 12, 7, 7, 0, 0, 0, 0xFFFFFF, 0x000000, 0,
-         BAGL_GLYPH_ICON_CROSS},
-        NULL,
-        0,
-        0,
-        0,
-        NULL,
-        NULL,
-        NULL,
-    },
-    {
-        {BAGL_ICON, 0x00, 117, 13, 8, 6, 0, 0, 0, 0xFFFFFF, 0x000000, 0,
-         BAGL_GLYPH_ICON_CHECK},
-        NULL,
-        0,
-        0,
-        0,
-        NULL,
-        NULL,
-        NULL,
-    },
-};
 
 static unsigned int
 bagl_ui_sample_nanos_button(unsigned int button_mask,
@@ -304,46 +349,7 @@ bagl_ui_sample_nanos_button(unsigned int button_mask,
     return 0;
 }
 
-static const bagl_element_t *io_seproxyhal_touch_exit(const bagl_element_t *e) {
-    // Go back to the dashboard
-    os_sched_exit(0);
-    return NULL;
-}
 
-unsigned short io_exchange_al(unsigned char channel, unsigned short tx_len) {
-    switch (channel & ~(IO_FLAGS)) {
-    case CHANNEL_KEYBOARD:
-        break;
-
-    // multiplexed io exchange over a SPI channel and TLV encapsulated protocol
-    case CHANNEL_SPI:
-        if (tx_len) {
-            io_seproxyhal_spi_send(G_io_apdu_buffer, tx_len);
-
-            if (channel & IO_RESET_AFTER_REPLIED) {
-                reset();
-            }
-            return 0; // nothing received from the master so far (it's a tx
-                      // transaction)
-        } else {
-            return io_seproxyhal_spi_recv(G_io_apdu_buffer,
-                                          sizeof(G_io_apdu_buffer), 0);
-        }
-
-    default:
-        THROW(INVALID_PARAMETER);
-    }
-    return 0;
-}
-
-void ui_idle(void) {
-    if (os_seph_features() &
-        SEPROXYHAL_TAG_SESSION_START_EVENT_FEATURE_SCREEN_BIG) {
-        UX_DISPLAY(bagl_ui_sample_blue, NULL);
-    } else {
-        UX_DISPLAY(bagl_ui_sample_nanos, NULL);
-    }
-}
 
 static void sample_main(void) {
     volatile unsigned int rx = 0;
