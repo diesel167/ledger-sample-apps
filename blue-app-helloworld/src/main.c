@@ -29,6 +29,8 @@ ux_state_t ux;
 // ********************************************************************************
 // Ledger Blue specific UI
 // ********************************************************************************
+
+
 bagl_element_t bagl_ui_sample_blue[] = {
     // {
     //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
@@ -97,9 +99,12 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // ********************************************************************************
 // Ledger Nano S specific UI
 // ********************************************************************************
-typedef struct temporary {
-    bagl_component_t component;
 
+
+char*name="Hello1";
+
+typedef struct  {
+    bagl_component_t component;
     char *text;
     unsigned char touch_area_brim;
     int overfgcolor;
@@ -107,9 +112,8 @@ typedef struct temporary {
     bagl_element_callback_t tap;
     bagl_element_callback_t out;
     bagl_element_callback_t over;
-};
+} temporary;
 
-char*name="Hello1";
 
 temporary tmp[] = {
 
