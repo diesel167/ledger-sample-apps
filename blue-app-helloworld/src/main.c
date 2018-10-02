@@ -25,6 +25,7 @@ unsigned char G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 static const bagl_element_t *io_seproxyhal_touch_exit(const bagl_element_t *e);
 
 ux_state_t ux;
+static void ui_idle(void);
 
 // ********************************************************************************
 // Ledger Blue specific UI
@@ -161,6 +162,15 @@ static unsigned int
 bagl_ui_sample_nanos_button(unsigned int button_mask,
                             unsigned int button_mask_counter) {
     switch (button_mask) {
+            
+    case BUTTON_EVT_RELEASED | BUTTON_LEFT:
+        io_seproxyhal_touch_auth(NULL);
+        break;
+
+    case BUTTON_EVT_RELEASED | BUTTON_RIGHT:
+        io_seproxyhal_touch_next(NULL);
+        break;
+            
     case BUTTON_EVT_RELEASED | BUTTON_LEFT | BUTTON_RIGHT: // EXIT
         io_seproxyhal_touch_exit(NULL);
         break;
@@ -200,7 +210,7 @@ unsigned short io_exchange_al(unsigned char channel, unsigned short tx_len) {
     return 0;
 }
 
-static void ui_idle(static const bagl_element_t bagl_ui_sample_nanos) {
+static void ui_idle() {
     if (os_seph_features() &
         SEPROXYHAL_TAG_SESSION_START_EVENT_FEATURE_SCREEN_BIG) {
         UX_DISPLAY(bagl_ui_sample_blue, NULL);
@@ -356,7 +366,7 @@ __attribute__((section(".boot"))) int main(void) {
             USB_power(0);
             USB_power(1);
 
-            ui_idle(bagl_ui_sample_nanos);
+            ui_idle();
 
             sample_main();
         }
