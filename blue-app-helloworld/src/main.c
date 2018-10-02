@@ -97,7 +97,7 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // ********************************************************************************
 // Ledger Nano S specific UI
 // ********************************************************************************
-struct temporary {
+typedef struct temporary {
     bagl_component_t component;
 
     char *text;
