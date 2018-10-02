@@ -27,6 +27,7 @@ static const bagl_element_t *io_seproxyhal_touch_exit(const bagl_element_t *e);
 ux_state_t ux;
 static void ui_idle(void);
 
+
 // ********************************************************************************
 // Ledger Blue specific UI
 // ********************************************************************************
@@ -99,7 +100,7 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // ********************************************************************************
 // Ledger Nano S specific UI
 // ********************************************************************************
-static const bagl_element_t bagl_ui_sample_nanos2[] = {
+static const bagl_element_t bagl_ui_sample_nanos_2[] = {
     // {
     //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
     //      bgcolor, font_id, icon_id},
@@ -156,7 +157,7 @@ static const bagl_element_t bagl_ui_sample_nanos2[] = {
         NULL,
     },
 };
-static const bagl_element_t bagl_ui_sample_nanos1[] = {
+static const bagl_element_t bagl_ui_sample_nanos_1[] = {
     // {
     //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
     //      bgcolor, font_id, icon_id},
@@ -273,16 +274,12 @@ static const bagl_element_t bagl_ui_sample_nanos[] = {
 };
 
 static unsigned int
-bagl_ui_sample_nanos_button(unsigned int button_mask,
+bagl_ui_sample_nanos_button_1(unsigned int button_mask,
                             unsigned int button_mask_counter) {
     switch (button_mask) {
             
     case BUTTON_EVT_RELEASED | BUTTON_LEFT:
-         UX_DISPLAY(bagl_ui_sample_nanos, NULL);
-        break;
-
-    case BUTTON_EVT_RELEASED | BUTTON_RIGHT:
-        UX_DISPLAY(bagl_ui_sample_nanos2, NULL);
+         UX_DISPLAY(bagl_ui_sample_nanos_1, NULL);
         break;
             
     case BUTTON_EVT_RELEASED | BUTTON_LEFT | BUTTON_RIGHT: // EXIT
@@ -291,6 +288,43 @@ bagl_ui_sample_nanos_button(unsigned int button_mask,
     }
     return 0;
 }
+
+static unsigned int
+bagl_ui_sample_nanos_button_2(unsigned int button_mask,
+                            unsigned int button_mask_counter) {
+    switch (button_mask) {
+            
+     case BUTTON_EVT_RELEASED | BUTTON_RIGHT:
+        UX_DISPLAY(bagl_ui_sample_nanos_2, NULL);
+        break;
+            
+    case BUTTON_EVT_RELEASED | BUTTON_LEFT | BUTTON_RIGHT: // EXIT
+        io_seproxyhal_touch_exit(NULL);
+        break;
+    }
+    return 0;
+}
+
+static unsigned int
+bagl_ui_sample_nanos_button(unsigned int button_mask,
+                            unsigned int button_mask_counter) {
+    switch (button_mask) {
+            
+    case BUTTON_EVT_RELEASED | BUTTON_LEFT:
+         UX_DISPLAY(bagl_ui_sample_nanos_1, NULL);
+        break;
+
+    case BUTTON_EVT_RELEASED | BUTTON_RIGHT:
+        UX_DISPLAY(bagl_ui_sample_nanos_2, NULL);
+        break;
+            
+    case BUTTON_EVT_RELEASED | BUTTON_LEFT | BUTTON_RIGHT: // EXIT
+        io_seproxyhal_touch_exit(NULL);
+        break;
+    }
+    return 0;
+}
+
 
 static const bagl_element_t *io_seproxyhal_touch_exit(const bagl_element_t *e) {
     // Go back to the dashboard
