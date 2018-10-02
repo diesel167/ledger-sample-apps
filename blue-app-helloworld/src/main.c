@@ -111,7 +111,7 @@ struct temporary {
 
 char*name="Hello1";
 
-temporary tmp[] = 
+temporary tmp[] = {
 
     {
         {BAGL_RECTANGLE, 0x00, 0, 0, 128, 32, 0, 0, BAGL_FILL, 0x000000,
