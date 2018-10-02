@@ -98,6 +98,15 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // ********************************************************************************
 // Ledger Nano S specific UI
 // ********************************************************************************
+void ui_idle(void) {
+    if (os_seph_features() &
+        SEPROXYHAL_TAG_SESSION_START_EVENT_FEATURE_SCREEN_BIG) {
+        UX_DISPLAY(bagl_ui_sample_blue, NULL);
+    } else {
+        UX_DISPLAY(bagl_ui_sample_nanos, NULL);
+    }
+}
+
 static const bagl_element_t *io_seproxyhal_touch_next(const bagl_element_t *e) {
   
     
@@ -334,14 +343,7 @@ unsigned short io_exchange_al(unsigned char channel, unsigned short tx_len) {
     return 0;
 }
 
-static void ui_idle(void) {
-    if (os_seph_features() &
-        SEPROXYHAL_TAG_SESSION_START_EVENT_FEATURE_SCREEN_BIG) {
-        UX_DISPLAY(bagl_ui_sample_blue, NULL);
-    } else {
-        UX_DISPLAY(bagl_ui_sample_nanos, NULL);
-    }
-}
+
 
 static void sample_main(void) {
     volatile unsigned int rx = 0;
