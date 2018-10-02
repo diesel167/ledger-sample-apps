@@ -99,7 +99,7 @@ bagl_ui_sample_blue_button(unsigned int button_mask,
 // Ledger Nano S specific UI
 // ********************************************************************************
 
-static const bagl_element_t bagl_ui_sample_nanos[] = {
+static bagl_element_t bagl_ui_sample_nanos[] = {
     // {
     //     {type, userid, x, y, width, height, stroke, radius, fill, fgcolor,
     //      bgcolor, font_id, icon_id},
